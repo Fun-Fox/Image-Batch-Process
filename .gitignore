@@ -7,12 +7,7 @@
 *.ini
 /.idea
 /.vscode
-/TaskList
-/ZipList
 /.gradio
 __pycache__
 .DS_Store
-/asset
-/fancyfeast
-/remote_caption_ws_server/fancyfeast
-/asset-local
+/deepseek-ai
