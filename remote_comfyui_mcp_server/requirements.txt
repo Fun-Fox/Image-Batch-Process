@@ -1,6 +1,0 @@
-loguru>=0.7.3
-python-dotenv>=0.21.0
-requests~=2.32.3
-websockets~=15.0.1
-mcp~=1.9.2
-aiohttp
