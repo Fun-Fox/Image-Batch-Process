@@ -11,3 +11,6 @@
 __pycache__
 .DS_Store
 /deepseek-ai
+*/tmp
+*/extend_image
+*/scale_image

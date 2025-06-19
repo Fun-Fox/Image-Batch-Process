@@ -131,10 +131,11 @@ async def process_image(image_path):
 
     if new_width < 1080 or new_height < 1920:
         print("图片尺寸不足 1080x1920，正在进行放大...")
-        # 计算放大倍数 1080/new_width/4（1.5倍放大）
+        # 计算放大倍数 1080/new_width/4
+        scale_num = 1080 / new_width / 4
         with open(image_path, "rb") as f:
             image_base64 = base64.b64encode(f.read()).decode("utf-8")
-        image_path = await scale_image(image_base64, 0.38)
+        image_path = await scale_image(image_base64, scale_num)
 
     print(f"最终输出图片路径: {image_path}")
 
