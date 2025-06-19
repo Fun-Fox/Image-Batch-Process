@@ -17,7 +17,19 @@
 ## 输出格式
 
 查看尺寸为9：16，分辨率 >1080*1920或者是它的倍数，没有水印的图片
+## 部署
 
+```commandline
+# 下载视觉模型
+set HF_ENDPOINT=https://hf-mirror.com
+# 下载模型到 项目 目录下
+huggingface-cli download deepseek-ai/Janus-Pro-7B --repo-type=model --local-dir /deepseek-ai/Janus-Pro-7B
+
+# 安装PyTorch
+pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu128
+pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu128
+
+```
 ## 使用到的ComfyUI工作流
 
 ### 步骤1

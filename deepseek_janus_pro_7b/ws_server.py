@@ -5,7 +5,7 @@ import os
 
 import yaml
 import websockets
-from .start_inference import load_model, to_image_understanding
+from start_inference import load_model, to_image_understanding
 from loguru import logger
 
 
