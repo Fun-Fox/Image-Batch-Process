@@ -8,6 +8,9 @@ import websockets
 from start_inference import load_model, to_image_understanding
 from loguru import logger
 
+# 模型初始化
+model_path = "deepseek-ai/Janus-Pro-7B"
+vl_chat_processor, vl_gpt, tokenizer = load_model(model_path)
 
 def image_understanding(image_path, require_element):
     question = f"""
@@ -20,10 +23,6 @@ def image_understanding(image_path, require_element):
            Y或N
        ```
        """
-    # 模型初始化
-    model_path = "deepseek-ai/Janus-Pro-7B"
-    vl_chat_processor, vl_gpt, tokenizer = load_model(model_path)
-
     # 图像分析
     image = image_path  # 需要传入图像数据
     ret = to_image_understanding(question, image, vl_chat_processor, vl_gpt, tokenizer)
