@@ -2,7 +2,6 @@ import asyncio
 import base64
 import json
 import os
-from os import remove
 
 import websockets
 
@@ -92,7 +91,7 @@ def get_image_size(image_path):
         return img.size
 
 
-async def process_image(image_path):
+async def sync_process_image(image_path):
     if not image_path or not os.path.exists(image_path):
         print("无效的图片路径")
         return
@@ -142,4 +141,4 @@ async def process_image(image_path):
 
 if __name__ == '__main__':
     image_path = "../doc/test.png"  # 示例路径，请替换为实际路径
-    asyncio.run(process_image(image_path))
+    asyncio.run(sync_process_image(image_path))
