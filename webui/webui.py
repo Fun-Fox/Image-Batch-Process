@@ -1,3 +1,5 @@
+import asyncio
+
 import gradio as gr
 import os
 from PIL import Image
@@ -15,7 +17,7 @@ def batch_process_images(folder_path):
     for img_file in image_files:
         full_path = os.path.join(folder_path, img_file)
         try:
-            output_path = sync_process_image(full_path)
+            output_path = asyncio.run(sync_process_image(full_path))
             original = Image.open(full_path)
             processed = Image.open(output_path)
             results.append((original, processed))
