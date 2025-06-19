@@ -31,10 +31,11 @@ ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 EXTEND_IMAGE_DIR = os.path.join(ROOT_DIR, "comfyui_client", "extend_image")
 SCALE_IMAGE_DIR = os.path.join(ROOT_DIR, "comfyui_client", "scale_image")
 
+
 # 加载 extend_image 文件夹中的图片
 def load_extend_images():
     if not os.path.exists(EXTEND_IMAGE_DIR):
-        return  []
+        return []
 
     image_files = [f for f in os.listdir(EXTEND_IMAGE_DIR) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
     images = []
@@ -48,11 +49,13 @@ def load_extend_images():
             print(f"无法打开图片 {img_file}: {e}")
 
     if not images:
-        return  []
-    return  images
+        return []
+    return images
+
+
 def load_scale_images():
     if not os.path.exists(SCALE_IMAGE_DIR):
-        return  []
+        return []
 
     image_files = [f for f in os.listdir(SCALE_IMAGE_DIR) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
     images = []
@@ -66,8 +69,9 @@ def load_scale_images():
             print(f"无法打开图片 {img_file}: {e}")
 
     if not images:
-        return  []
+        return []
     return images
+
 
 # Gradio 界面
 with gr.Blocks() as demo:
@@ -81,9 +85,9 @@ with gr.Blocks() as demo:
     2. **调整尺寸（扩图）**：确保比例为 9:16  
     3. **放大清晰度**：若分辨率小于 1080x1920，则放大处理  
     """)
-
+    image_path = os.path.join(ROOT_DIR, "doc", "images")
     with gr.Row():
-        folder_input = gr.Textbox(label="输入图片文件夹路径", value="./images")
+        folder_input = gr.Textbox(label="输入图片文件夹路径", value=image_path)
 
     process_btn = gr.Button("开始批量处理")
 
