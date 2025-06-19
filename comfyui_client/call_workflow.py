@@ -24,7 +24,7 @@ tmp_dir = os.path.join(current_dir, "tmp")
 os.makedirs(tmp_dir, exist_ok=True)
 
 
-async def extend_image(image_base64,left,right,top,bottom):
+async def extend_image(image_base64, left, right, top, bottom):
     """使用ComfyUI进行扩图"""
     try:
         # 生成唯一的文件名
@@ -49,7 +49,7 @@ async def extend_image(image_base64,left,right,top,bottom):
 
         # 加载参数映射表
         mapping = comfyui_client.load_mapping(workflow_id)
-        params = {"image": image, "left": left, "right": top, "top": right, "bottom": bottom}  # 创建基本参数字典
+        params = {"image": image, "left": left, "right": right, "top": top, "bottom": bottom}  # 创建基本参数字典
 
         # 将参数应用到工作流中的相应节点
         for param_key, value in params.items():
@@ -83,7 +83,7 @@ async def extend_image(image_base64,left,right,top,bottom):
         logger.error(f"错误: {e}")
 
 
-async def remove_watermark(image_base64,):
+async def remove_watermark(image_base64, ):
     """使用ComfyUI进行水印去除"""
     try:
         # 生成唯一的文件名
@@ -141,7 +141,7 @@ async def remove_watermark(image_base64,):
         logger.error(f"错误: {e}")
 
 
-async def scale_image(image_base64,scale_by):
+async def scale_image(image_base64, scale_by):
     """使用ComfyUI进行水印去除"""
     try:
 

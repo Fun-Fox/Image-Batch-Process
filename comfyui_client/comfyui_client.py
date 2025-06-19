@@ -17,8 +17,8 @@ class ComfyUIClient:
             base_url (str): ComfyUI服务的基础URL
         """
         self.base_url = base_url  # 初始化基础URL
-        self.available_models = self._get_available_models()  # 获取可用模型列表
-        self.mappings_dir = "mappings"  # 参数映射表文件夹
+        # self.available_models = self._get_available_models()  # 获取可用模型列表
+        self.mappings_dir = os.path.join(current_dir,"mappings")  # 参数映射表文件夹
 
     def _get_available_models(self):
         """获取ComfyUI中可用的检查点模型列表"""

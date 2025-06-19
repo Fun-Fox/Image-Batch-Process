@@ -1,4 +1,5 @@
 import asyncio
+import base64
 import json
 import os
 from os import remove
@@ -9,7 +10,7 @@ from comfyui_client.call_workflow import remove_watermark, extend_image, scale_i
 
 
 async def check_water_mark_image(payload):
-    uri = os.getenv("VLM_MODEL_HOST")
+    uri = os.getenv("VLM_MODEL_WS_HOST")
     try:
         async with websockets.connect(uri) as ws:
             print("已连接到MCP服务器")
@@ -29,44 +30,47 @@ from PIL import Image
 
 
 def calculate_extension(width, height):
-    """
-    根据图片宽高计算需要扩展的像素值。
-
-    参数:
-        width (int): 图片的宽度。
-        height (int): 图片的高度。
-
-    返回:
-        tuple: (left, right, top, bottom) 表示左右上下需要扩展的像素值。
-    """
-    # 计算当前宽高比与目标比例（9:16）是否一致
     target_ratio_width = 9
     target_ratio_height = 16
 
-    # 计算当前宽高比与目标比例（9:16）是否一致
     current_ratio = width / height
     target_ratio = target_ratio_width / target_ratio_height
 
-    # 判断是否已经符合目标比例
-    if abs(current_ratio - target_ratio) < 1e-5:  # 使用小量容差避免浮点误差
+    if abs(current_ratio - target_ratio) < 1e-5:
         return 0, 0, 0, 0
 
     if width > height:
-        # 宽大于高，按上下扩展
-        new_height = (width / target_ratio_width) * target_ratio_height
-        padding = (new_height - height) / 2
-        top = int(padding)
-        bottom = int(padding)
-        left = 0
-        right = 0
+        # 宽大于高 → 先假设上下扩展
+        required_height = width * target_ratio_height // target_ratio_width
+        if required_height > height:
+            padding = (required_height - height) // 2
+            top = padding
+            bottom = required_height - height - padding
+            left = right = 0
+        else:
+            # 宽度太大，高度已足够，改为左右扩展宽度
+            required_width = height * target_ratio_width // target_ratio_height
+            padding = (required_width - width) // 2
+            left = padding
+            right = required_width - width - padding
+            top = bottom = 0
+
     elif height > width:
-        # 高大于宽，按左右扩展
-        new_width = (height / target_ratio_height) * target_ratio_width
-        padding = (new_width - width) / 2
-        left = int(padding)
-        right = int(padding)
-        top = 0
-        bottom = 0
+        # 高大于宽 → 先假设左右扩展
+        required_width = height * target_ratio_width // target_ratio_height
+        if required_width > width:
+            padding = (required_width - width) // 2
+            left = padding
+            right = required_width - width - padding
+            top = bottom = 0
+        else:
+            # 高度太大，宽度已足够，改为上下扩展高度
+            required_height = width * target_ratio_height // target_ratio_width
+            padding = (required_height - height) // 2
+            top = padding
+            bottom = required_height - height - padding
+            left = right = 0
+
     else:
         # 宽等于高，无需扩展
         left = right = top = bottom = 0
@@ -98,12 +102,10 @@ async def process_image(image_path):
         return image_path  # 或根据需求返回 None 或抛出提示
     # 读取图片并转为 base64
     with open(image_path, "rb") as f:
-        image_base64 = f.read().decode("utf-8")
+        image_base64 = base64.b64encode(f.read()).decode("utf-8")
     payload = {
         "tool": "image_understanding",
-        "params": json.dumps({
-            "image_base64": image_base64,
-        })
+        "image_base64": image_base64,
     }
     if await check_water_mark_image(payload):
         print("检测到水印，正在去水印...")
@@ -111,7 +113,7 @@ async def process_image(image_path):
 
         # 更新 base64 和尺寸
         with open(image_path, "rb") as f:
-            image_base64 = f.read().decode("utf-8")
+            image_base64 = base64.b64encode(f.read()).decode("utf-8")
         width, height = get_image_size(image_path)
     else:
         width, height = get_image_size(image_path)
@@ -119,7 +121,7 @@ async def process_image(image_path):
     left, right, top, bottom = calculate_extension(width, height)
     if left != 0 or right != 0 or top != 0 or bottom != 0:
         print(f"图片需扩图，宽: {width}, 高: {height}, 左: {left}, 右: {right}, 上: {top}, 下: {bottom}")
-        image_path = extend_image(image_base64, left, right, top, bottom)
+        image_path = await extend_image(image_base64, left, right, top, bottom)
         width, height = get_image_size(image_path)
 
     new_width = width + left + right
@@ -130,7 +132,9 @@ async def process_image(image_path):
     if new_width < 1080 or new_height < 1920:
         print("图片尺寸不足 1080x1920，正在进行放大...")
         # 计算放大倍数 1080/new_width/4（1.5倍放大）
-        image_path = scale_image(image_path, 0.38)
+        with open(image_path, "rb") as f:
+            image_base64 = base64.b64encode(f.read()).decode("utf-8")
+        image_path = await scale_image(image_base64, 0.38)
 
     print(f"最终输出图片路径: {image_path}")
 
