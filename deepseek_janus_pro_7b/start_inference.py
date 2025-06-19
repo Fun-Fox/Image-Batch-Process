@@ -46,7 +46,7 @@ def to_image_understanding(question, image, vl_chat_processor, vl_gpt, tokenizer
         bos_token_id=tokenizer.bos_token_id,
         eos_token_id=tokenizer.eos_token_id,
         max_new_tokens=512,
-        do_sample=False,
+        do_sample=True,
         use_cache=True
     )
 
@@ -55,19 +55,19 @@ def to_image_understanding(question, image, vl_chat_processor, vl_gpt, tokenizer
     return answer
 
 
-if __name__ == "__main__":
-    # 模型初始化
-    model_path = "deepseek-ai/Janus-Pro-7B"
-    vl_chat_processor, vl_gpt, tokenizer = load_model(model_path)
-
-    # 问题定义
-    question = """
-    判断图像中是否有水印
-    # 输出格式如下：
-    - 有水印就输出1
-    - 没有水印就输出0
-    """
-
-    # 图像分析
-    image = ""  # 需要传入图像数据
-    to_image_understanding(question, image, vl_chat_processor, vl_gpt, tokenizer)
+# if __name__ == "__main__":
+#     # 模型初始化
+#     model_path = "deepseek-ai/Janus-Pro-7B"
+#     vl_chat_processor, vl_gpt, tokenizer = load_model(model_path)
+#
+#     # 问题定义
+#     question = """
+#     判断图像中是否有水印
+#     # 输出格式如下：
+#     - 有水印就输出1
+#     - 没有水印就输出0
+#     """
+#
+#     # 图像分析
+#     image = ""  # 需要传入图像数据
+#     to_image_understanding(question, image, vl_chat_processor, vl_gpt, tokenizer)
